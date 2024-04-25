@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download PDF</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Download PDF (RabbitMQ PHP)</h4>
+                        <p class="card-text">Klik tombol di bawah ini untuk mendownload file PDF.</p>
+                        <input type="text" name="name" id="name" class="form-control"
+                            placeholder="Masukan text yang ingin dimunculkan di PDF..." />
+                        <button type="button" class="btn btn-primary mt-3" onclick="downloadPDF()" id="downloadBtn">Download PDF</button>
+                    </div>
+                </div>
+                <div class="mt-3" style="display:none" id="container_pdf">
+                    <hr />
+                    <h5>PDF Viewer</h5>
+                    <small>
+                        <ul>
+                            <li>Sending Request date : <span id="sending_date"></span></li>
+                            <li>Receive Request date : <span id="received_date"></span></li>
+                        </ul>
+                    <small>
+                    <iframe id="pdfIframe" src="" width="100%" height="500px"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let requestInProgress = false;
+
+        function downloadPDF() {
+            // Cegah pengguna menutup tab saat permintaan sedang diproses
+            window.onbeforeunload = function () {
+                if (requestInProgress) {
+                    return 'Sedang mengirim permintaan ke server. Apakah Anda yakin ingin meninggalkan halaman?';
+                }
+            };
+
+            const name = document.getElementById('name').value;
+
+            var xhr = new XMLHttpRequest();
+            document.getElementById("downloadBtn").disabled = true;
+            document.getElementById("downloadBtn").innerText = "Loading...";
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        let response = JSON.parse(xhr.response);
+
+                        document.getElementById("sending_date").innerText = response.data.sending_date;
+                        document.getElementById("received_date").innerText = response.data.received_date;
+                        let iframe = document.getElementById('pdfIframe');
+                        iframe.src = response.data.url_file;
+
+                        let container_pdf = document.getElementById('container_pdf');
+                        container_pdf.style = "display:block";
+
+                        document.getElementById("downloadBtn").disabled = false;
+                        document.getElementById("downloadBtn").innerText = "Download PDF";
+
+                        // Setelah permintaan selesai, izinkan penutupan tab kembali
+                        window.onbeforeunload = null;
+                        requestInProgress = false;
+                    } else {
+                        console.error('Error:', xhr.status);
+                    }
+                }
+            };
+
+            xhr.open('POST', 'producer.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send("name=" + name);
+
+            // Tandai bahwa permintaan sedang diproses
+            requestInProgress = true;
+        }
+    </script>
+</body>
+
+</html>

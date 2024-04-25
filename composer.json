@@ -1,0 +1,20 @@
+{
+    "name": "user/rabbitmq-php-implementation",
+    "autoload": {
+        "psr-4": {
+            "User\\RabbitmqPhpImplementation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aziz Arif Rizaldi",
+            "email": "azizarifrizaldi@gmail.com"
+        }
+    ],
+    "require": {
+        "php-amqplib/php-amqplib": "^3.6",
+        "mpdf/mpdf": "^8.2",
+        "vlucas/phpdotenv": "^5.6",
+        "aws/aws-sdk-php": "^3.305"
+    }
+}
