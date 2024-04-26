@@ -107,7 +107,7 @@ class Consumer {
     public function run(){
         echo "========================== Start Service ==========================\n";
         $this->channel = $this->connection->channel();
-        $this->channel->queue_declare('queue_classic_azardi', false, false, false, false);
+        $this->channel->queue_declare('test_pdf_download', false, false, false, false);
 
         // create callback function
         $callback = function ($msg) {
@@ -125,6 +125,8 @@ class Consumer {
             
             // Generate PDF and upload to s3 file
             $generate_pdf = $this->generate_pdf($data['fullname']);
+            
+            sleep(3);
             
             $url_file = "";
             if($generate_pdf['status']) {
@@ -171,8 +173,8 @@ class Consumer {
             echo "========================== Queue Complete ==========================\n";
         };
 
-        $this->channel->basic_qos(null, 2, null);
-        $this->channel->basic_consume('queue_classic_azardi', '', false, false, false, false, $callback);
+        $this->channel->basic_qos(null, 1, null);
+        $this->channel->basic_consume('test_pdf_download', '', false, false, false, false, $callback);
 
         // keep runtime alive
         while (count($this->channel->callbacks)) {

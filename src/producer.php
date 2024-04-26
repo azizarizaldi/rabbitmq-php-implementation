@@ -36,7 +36,7 @@ class Producer {
        $this->channel = $this->connection->channel();
        $this->callback_queue = null;
        list($this->callback_queue, ,) = $this->channel->queue_declare(
-            "", // queue name
+            "",
             false,
             false,
             true,
@@ -68,7 +68,7 @@ class Producer {
     public function index() {
         $fullname       = isset($_POST['name']) ? $_POST['name'] : '-';
         $sending_date   = date("Y-m-d H:i:s");
-        $queue_name     = 'queue_classic_azardi';
+        $queue_name     = 'test_pdf_download';
 
     	$this->response = null;
         $this->corr_id = uniqid();
